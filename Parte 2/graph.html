@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 700px;
+                 height: 500px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 700px;
+                 height: 500px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Moutet C.", "label": "Moutet C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wu Y.", "label": "Wu Y.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Watanuki Y.", "label": "Watanuki Y.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rinderknech A.", "label": "Rinderknech A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Van De Zandschulp B.", "label": "Van De Zandschulp B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ivashka I.", "label": "Ivashka I.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Etcheverry T.", "label": "Etcheverry T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Barrere G.", "label": "Barrere G.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sinner J.", "label": "Sinner J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Edmund K.", "label": "Edmund K.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cerundolo F.", "label": "Cerundolo F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pella G.", "label": "Pella G.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shang J.", "label": "Shang J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Otte O.", "label": "Otte O.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hurkacz H.", "label": "Hurkacz H.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Martinez P.", "label": "Martinez P.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Korda S.", "label": "Korda S.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Garin C.", "label": "Garin C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nishioka Y.", "label": "Nishioka Y.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ymer M.", "label": "Ymer M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shapovalov D.", "label": "Shapovalov D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lajovic D.", "label": "Lajovic D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Griekspoor T.", "label": "Griekspoor T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kotov P.", "label": "Kotov P.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mcdonald M.", "label": "Mcdonald M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nakashima B.", "label": "Nakashima B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Khachanov K.", "label": "Khachanov K.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zapata Miralles B.", "label": "Zapata Miralles B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tiafoe F.", "label": "Tiafoe F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Altmaier D.", "label": "Altmaier D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nadal R.", "label": "Nadal R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Draper J.", "label": "Draper J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Daniel T.", "label": "Daniel T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Escobedo E.", "label": "Escobedo E.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sonego L.", "label": "Sonego L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Borges N.", "label": "Borges N.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lehecka J.", "label": "Lehecka J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Coric B.", "label": "Coric B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kubler J.", "label": "Kubler J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Baez S.", "label": "Baez S.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Svrcina D.", "label": "Svrcina D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Munar J.", "label": "Munar J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Millman J.", "label": "Millman J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Huesler M.A.", "label": "Huesler M.A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Eubanks C.", "label": "Eubanks C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kwon S.W.", "label": "Kwon S.W.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fucsovics M.", "label": "Fucsovics M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Coria F.", "label": "Coria F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Molcan A.", "label": "Molcan A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wawrinka S.", "label": "Wawrinka S.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hijikata R.", "label": "Hijikata R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hanfmann Y.", "label": "Hanfmann Y.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Norrie C.", "label": "Norrie C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Van Assche L.", "label": "Van Assche L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Auger-Aliassime F.", "label": "Auger-Aliassime F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pospisil V.", "label": "Pospisil V.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tsitsipas S.", "label": "Tsitsipas S.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Halys Q.", "label": "Halys Q.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lestienne C.", "label": "Lestienne C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Monteiro T.", "label": "Monteiro T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Harris L.", "label": "Harris L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Musetti L.", "label": "Musetti L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Medvedev D.", "label": "Medvedev D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Giron M.", "label": "Giron M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rublev A.", "label": "Rublev A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thiem D.", "label": "Thiem D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Evans D.", "label": "Evans D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bagnis F.", "label": "Bagnis F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bonzi B.", "label": "Bonzi B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bellucci M.", "label": "Bellucci M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dimitrov G.", "label": "Dimitrov G.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Karatsev A.", "label": "Karatsev A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Djere L.", "label": "Djere L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bergs Z.", "label": "Bergs Z.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Schwartzman D.", "label": "Schwartzman D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Krutykh O.", "label": "Krutykh O.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jarry N.", "label": "Jarry N.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kecmanovic M.", "label": "Kecmanovic M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Davidovich Fokina A.", "label": "Davidovich Fokina A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bublik A.", "label": "Bublik A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carreno Busta P.", "label": "Carreno Busta P.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cachin P.", "label": "Cachin P.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wolf J.J.", "label": "Wolf J.J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thompson J.", "label": "Thompson J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fritz T.", "label": "Fritz T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Basilashvili N.", "label": "Basilashvili N.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rune H.", "label": "Rune H.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Krajinovic F.", "label": "Krajinovic F.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shelton B.", "label": "Shelton B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zhang Zh.", "label": "Zhang Zh.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Murray A.", "label": "Murray A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Berrettini M.", "label": "Berrettini M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zverev A.", "label": "Zverev A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Varillas J. P.", "label": "Varillas J. P.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Paul T.", "label": "Paul T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Struff J.L.", "label": "Struff J.L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Brooksby J.", "label": "Brooksby J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "O Connell C.", "label": "O Connell C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "De Minaur A.", "label": "De Minaur A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hsu Y.", "label": "Hsu Y.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Popyrin A.", "label": "Popyrin A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tseng C. H.", "label": "Tseng C. H.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ruud C.", "label": "Ruud C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Machac T.", "label": "Machac T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Djokovic N.", "label": "Djokovic N.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carballes Baena R.", "label": "Carballes Baena R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ruusuvuori E.", "label": "Ruusuvuori E.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Purcell M.", "label": "Purcell M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Humbert U.", "label": "Humbert U.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gasquet R.", "label": "Gasquet R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kudla D.", "label": "Kudla D.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Safiullin R.", "label": "Safiullin R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mmoh M.", "label": "Mmoh M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lokoli L.", "label": "Lokoli L.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mannarino A.", "label": "Mannarino A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Isner J.", "label": "Isner J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Holt B.", "label": "Holt B.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vukic A.", "label": "Vukic A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bautista Agut R.", "label": "Bautista Agut R.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sousa J.", "label": "Sousa J.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Couacaud E.", "label": "Couacaud E.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dellien H.", "label": "Dellien H.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cressy M.", "label": "Cressy M.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ramos-Vinolas A.", "label": "Ramos-Vinolas A.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kokkinakis T.", "label": "Kokkinakis T.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fognini F.", "label": "Fognini F.", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Moutet C.", "to": "Wu Y."}, {"arrows": "to", "from": "Watanuki Y.", "to": "Rinderknech A."}, {"arrows": "to", "from": "Van De Zandschulp B.", "to": "Ivashka I."}, {"arrows": "to", "from": "Etcheverry T.", "to": "Barrere G."}, {"arrows": "to", "from": "Sinner J.", "to": "Edmund K."}, {"arrows": "to", "from": "Sinner J.", "to": "Etcheverry T."}, {"arrows": "to", "from": "Sinner J.", "to": "Fucsovics M."}, {"arrows": "to", "from": "Cerundolo F.", "to": "Pella G."}, {"arrows": "to", "from": "Cerundolo F.", "to": "Moutet C."}, {"arrows": "to", "from": "Shang J.", "to": "Otte O."}, {"arrows": "to", "from": "Hurkacz H.", "to": "Martinez P."}, {"arrows": "to", "from": "Hurkacz H.", "to": "Sonego L."}, {"arrows": "to", "from": "Hurkacz H.", "to": "Shapovalov D."}, {"arrows": "to", "from": "Korda S.", "to": "Garin C."}, {"arrows": "to", "from": "Korda S.", "to": "Watanuki Y."}, {"arrows": "to", "from": "Korda S.", "to": "Medvedev D."}, {"arrows": "to", "from": "Korda S.", "to": "Hurkacz H."}, {"arrows": "to", "from": "Nishioka Y.", "to": "Ymer M."}, {"arrows": "to", "from": "Nishioka Y.", "to": "Svrcina D."}, {"arrows": "to", "from": "Nishioka Y.", "to": "Mcdonald M."}, {"arrows": "to", "from": "Shapovalov D.", "to": "Lajovic D."}, {"arrows": "to", "from": "Shapovalov D.", "to": "Daniel T."}, {"arrows": "to", "from": "Griekspoor T.", "to": "Kotov P."}, {"arrows": "to", "from": "Griekspoor T.", "to": "Van De Zandschulp B."}, {"arrows": "to", "from": "Mcdonald M.", "to": "Nakashima B."}, {"arrows": "to", "from": "Mcdonald M.", "to": "Nadal R."}, {"arrows": "to", "from": "Khachanov K.", "to": "Zapata Miralles B."}, {"arrows": "to", "from": "Khachanov K.", "to": "Kubler J."}, {"arrows": "to", "from": "Khachanov K.", "to": "Tiafoe F."}, {"arrows": "to", "from": "Khachanov K.", "to": "Nishioka Y."}, {"arrows": "to", "from": "Tiafoe F.", "to": "Altmaier D."}, {"arrows": "to", "from": "Tiafoe F.", "to": "Shang J."}, {"arrows": "to", "from": "Nadal R.", "to": "Draper J."}, {"arrows": "to", "from": "Daniel T.", "to": "Escobedo E."}, {"arrows": "to", "from": "Sonego L.", "to": "Borges N."}, {"arrows": "to", "from": "Lehecka J.", "to": "Coric B."}, {"arrows": "to", "from": "Lehecka J.", "to": "Eubanks C."}, {"arrows": "to", "from": "Lehecka J.", "to": "Norrie C."}, {"arrows": "to", "from": "Lehecka J.", "to": "Auger-Aliassime F."}, {"arrows": "to", "from": "Kubler J.", "to": "Baez S."}, {"arrows": "to", "from": "Svrcina D.", "to": "Munar J."}, {"arrows": "to", "from": "Millman J.", "to": "Huesler M.A."}, {"arrows": "to", "from": "Eubanks C.", "to": "Kwon S.W."}, {"arrows": "to", "from": "Fucsovics M.", "to": "Coria F."}, {"arrows": "to", "from": "Fucsovics M.", "to": "Harris L."}, {"arrows": "to", "from": "Molcan A.", "to": "Wawrinka S."}, {"arrows": "to", "from": "Hijikata R.", "to": "Hanfmann Y."}, {"arrows": "to", "from": "Norrie C.", "to": "Van Assche L."}, {"arrows": "to", "from": "Norrie C.", "to": "Lestienne C."}, {"arrows": "to", "from": "Auger-Aliassime F.", "to": "Pospisil V."}, {"arrows": "to", "from": "Auger-Aliassime F.", "to": "Molcan A."}, {"arrows": "to", "from": "Auger-Aliassime F.", "to": "Cerundolo F."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Halys Q."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Hijikata R."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Griekspoor T."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Sinner J."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Lehecka J."}, {"arrows": "to", "from": "Tsitsipas S.", "to": "Khachanov K."}, {"arrows": "to", "from": "Lestienne C.", "to": "Monteiro T."}, {"arrows": "to", "from": "Harris L.", "to": "Musetti L."}, {"arrows": "to", "from": "Medvedev D.", "to": "Giron M."}, {"arrows": "to", "from": "Medvedev D.", "to": "Millman J."}, {"arrows": "to", "from": "Rublev A.", "to": "Thiem D."}, {"arrows": "to", "from": "Rublev A.", "to": "Ruusuvuori E."}, {"arrows": "to", "from": "Rublev A.", "to": "Evans D."}, {"arrows": "to", "from": "Rublev A.", "to": "Rune H."}, {"arrows": "to", "from": "Evans D.", "to": "Bagnis F."}, {"arrows": "to", "from": "Bonzi B.", "to": "Bellucci M."}, {"arrows": "to", "from": "Bonzi B.", "to": "Carreno Busta P."}, {"arrows": "to", "from": "Dimitrov G.", "to": "Karatsev A."}, {"arrows": "to", "from": "Dimitrov G.", "to": "Djere L."}, {"arrows": "to", "from": "Djere L.", "to": "Bergs Z."}, {"arrows": "to", "from": "Schwartzman D.", "to": "Krutykh O."}, {"arrows": "to", "from": "Jarry N.", "to": "Kecmanovic M."}, {"arrows": "to", "from": "Davidovich Fokina A.", "to": "Bublik A."}, {"arrows": "to", "from": "Carreno Busta P.", "to": "Cachin P."}, {"arrows": "to", "from": "Wolf J.J.", "to": "Thompson J."}, {"arrows": "to", "from": "Wolf J.J.", "to": "Schwartzman D."}, {"arrows": "to", "from": "Wolf J.J.", "to": "Mmoh M."}, {"arrows": "to", "from": "Fritz T.", "to": "Basilashvili N."}, {"arrows": "to", "from": "Rune H.", "to": "Krajinovic F."}, {"arrows": "to", "from": "Rune H.", "to": "Cressy M."}, {"arrows": "to", "from": "Rune H.", "to": "Humbert U."}, {"arrows": "to", "from": "Shelton B.", "to": "Zhang Zh."}, {"arrows": "to", "from": "Shelton B.", "to": "Jarry N."}, {"arrows": "to", "from": "Shelton B.", "to": "Popyrin A."}, {"arrows": "to", "from": "Shelton B.", "to": "Wolf J.J."}, {"arrows": "to", "from": "Murray A.", "to": "Berrettini M."}, {"arrows": "to", "from": "Murray A.", "to": "Kokkinakis T."}, {"arrows": "to", "from": "Zverev A.", "to": "Varillas J. P."}, {"arrows": "to", "from": "Paul T.", "to": "Struff J.L."}, {"arrows": "to", "from": "Paul T.", "to": "Davidovich Fokina A."}, {"arrows": "to", "from": "Paul T.", "to": "Brooksby J."}, {"arrows": "to", "from": "Paul T.", "to": "Bautista Agut R."}, {"arrows": "to", "from": "Paul T.", "to": "Shelton B."}, {"arrows": "to", "from": "Brooksby J.", "to": "O Connell C."}, {"arrows": "to", "from": "Brooksby J.", "to": "Ruud C."}, {"arrows": "to", "from": "De Minaur A.", "to": "Hsu Y."}, {"arrows": "to", "from": "De Minaur A.", "to": "Mannarino A."}, {"arrows": "to", "from": "De Minaur A.", "to": "Bonzi B."}, {"arrows": "to", "from": "Popyrin A.", "to": "Tseng C. H."}, {"arrows": "to", "from": "Popyrin A.", "to": "Fritz T."}, {"arrows": "to", "from": "Ruud C.", "to": "Machac T."}, {"arrows": "to", "from": "Djokovic N.", "to": "Carballes Baena R."}, {"arrows": "to", "from": "Djokovic N.", "to": "Couacaud E."}, {"arrows": "to", "from": "Djokovic N.", "to": "Dimitrov G."}, {"arrows": "to", "from": "Djokovic N.", "to": "De Minaur A."}, {"arrows": "to", "from": "Djokovic N.", "to": "Rublev A."}, {"arrows": "to", "from": "Djokovic N.", "to": "Paul T."}, {"arrows": "to", "from": "Djokovic N.", "to": "Tsitsipas S."}, {"arrows": "to", "from": "Ruusuvuori E.", "to": "Purcell M."}, {"arrows": "to", "from": "Humbert U.", "to": "Gasquet R."}, {"arrows": "to", "from": "Humbert U.", "to": "Kudla D."}, {"arrows": "to", "from": "Kudla D.", "to": "Safiullin R."}, {"arrows": "to", "from": "Mmoh M.", "to": "Lokoli L."}, {"arrows": "to", "from": "Mmoh M.", "to": "Zverev A."}, {"arrows": "to", "from": "Mannarino A.", "to": "Isner J."}, {"arrows": "to", "from": "Holt B.", "to": "Vukic A."}, {"arrows": "to", "from": "Bautista Agut R.", "to": "Sousa J."}, {"arrows": "to", "from": "Bautista Agut R.", "to": "Holt B."}, {"arrows": "to", "from": "Bautista Agut R.", "to": "Murray A."}, {"arrows": "to", "from": "Couacaud E.", "to": "Dellien H."}, {"arrows": "to", "from": "Cressy M.", "to": "Ramos-Vinolas A."}, {"arrows": "to", "from": "Kokkinakis T.", "to": "Fognini F."}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
